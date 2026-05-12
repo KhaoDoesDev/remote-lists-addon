@@ -1,24 +1,29 @@
 {
   "schemaVersion": 1,
-  "id": "addon-template",
+  "id": "remote-lists-addon",
   "version": "${version}",
-  "name": "Addon Template",
-  "description": "An addon template for Meteor Client addons.",
+  "name": "Remote Lists Addon",
+  "description": "An addon to control your friends list (and more) remotely via an API.",
   "authors": [
-    "seasnail"
+    {
+      "name": "Khao",
+      "contact": {
+        "homepage": "https://khaodoes.dev/"
+      }
+    }
   ],
   "contact": {
-    "sources": "https://github.com/MeteorDevelopment/meteor-addon-template"
+    "sources": "https://github.com/KhaoDoesDev/remote-lists-addon"
   },
-  "icon": "assets/template/icon.png",
+  "icon": "assets/remote-lists-addon/icon.png",
   "environment": "client",
   "entrypoints": {
     "meteor": [
-      "com.example.addon.AddonTemplate"
+      "dev.khaodoes.remoteListsAddon.RemoteListsAddon"
     ]
   },
   "mixins": [
-    "addon-template.mixins.json"
+    "remote-lists-addon.mixins.json"
   ],
   "custom": {
     "meteor-client:color": "225,25,25",
