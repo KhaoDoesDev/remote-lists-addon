@@ -15,6 +15,9 @@ meteor = "1.21.11-SNAPSHOT"
 # JDA (https://github.com/discord-jda/JDA)
 jda = "6.4.1"
 
+# shadow
+shadow = "9.4.1"
+
 # Mods
 
 [libraries]
@@ -33,3 +36,4 @@ jda = { module = "net.dv8tion:JDA", version.ref = "jda" }
 
 [plugins]
 fabric-loom = { id = "fabric-loom", version.ref = "loom" }
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }

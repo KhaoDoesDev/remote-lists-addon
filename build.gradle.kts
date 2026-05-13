@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.fabric.loom)
+    alias(libs.plugins.shadow)
 }
 
 base {
@@ -31,7 +32,8 @@ dependencies {
     modImplementation(libs.meteor.client)
 
     // JDA
-    include(modImplementation(libs.jda)!!)
+    implementation(libs.jda) { exclude(module = "opus-java") }
+    shadow(libs.jda) { exclude(module = "opus-java") }
 }
 
 tasks {
