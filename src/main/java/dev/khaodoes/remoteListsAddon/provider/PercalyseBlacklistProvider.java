@@ -76,8 +76,9 @@ public class PercalyseBlacklistProvider implements PlayerListProvider {
     }
 
     @Override
-    public boolean addPlayer(String listId, String username) {
-        if (!available || !enabled || !LIST_ID.equals(listId) || username == null || username.isBlank()) return false;
+    public boolean addPlayer(String username) {
+        if (!available || !enabled) return false;
+        if (username == null || username.isBlank()) return false;
         try {
             boolean result = (boolean) addPlayerMethod.invoke(instance, username);
             if (result) refresh();
@@ -86,8 +87,9 @@ public class PercalyseBlacklistProvider implements PlayerListProvider {
     }
 
     @Override
-    public boolean removePlayer(String listId, String username) {
-        if (!available || !enabled || !LIST_ID.equals(listId) || username == null || username.isBlank()) return false;
+    public boolean removePlayer(String username) {
+        if (!available || !enabled) return false;
+        if (username == null || username.isBlank()) return false;
         try {
             boolean result = (boolean) removePlayerMethod.invoke(instance, username);
             if (result) refresh();

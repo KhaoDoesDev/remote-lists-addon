@@ -110,7 +110,6 @@ public class RemoteListsAddon extends MeteorAddon {
             .build()
         );
 
-
         discordToken = sg.add(new StringSetting.Builder()
             .name("discord-token")
             .description("Discord bot token.")

@@ -9,10 +9,10 @@ public interface PlayerListProvider {
     Collection<PlayerList> getLists();
     void refresh();
 
-    default boolean addPlayer(String listId, String username) {
+    default boolean addPlayer(String username) {
         return false;
     }
-    default boolean removePlayer(String listId, String username) {
+    default boolean removePlayer(String username) {
         return false;
     }
 }

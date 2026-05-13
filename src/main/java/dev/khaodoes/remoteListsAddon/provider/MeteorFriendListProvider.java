@@ -49,17 +49,20 @@ public class MeteorFriendListProvider implements PlayerListProvider {
     }
 
     @Override
-    public boolean addPlayer(String listId, String username) {
-        if (!LIST_ID.equals(listId) || username == null || username.isBlank()) return false;
-        Friend f = new Friend(username);
-        boolean added = Friends.get().add(f);
-        if (added) refresh();
+    public boolean addPlayer(String username) {
+        if (username == null || username.isBlank()) return false;
+        Friend friend = new Friend(username);
+        boolean added = Friends.get().add(friend);
+        if (added) {
+            friend.updateInfo();
+            refresh();
+        }
         return added;
     }
 
     @Override
-    public boolean removePlayer(String listId, String username) {
-        if (!LIST_ID.equals(listId) || username == null || username.isBlank()) return false;
+    public boolean removePlayer(String username) {
+        if (username == null || username.isBlank()) return false;
         Friend f = Friends.get().get(username);
         if (f == null) return false;
         boolean removed = Friends.get().remove(f);
