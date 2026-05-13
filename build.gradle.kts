@@ -9,6 +9,10 @@ base {
     group = properties["maven_group"] as String
 }
 
+tasks.shadowJar {
+    isZip64 = true
+}
+
 repositories {
     mavenCentral()
 
