@@ -13,6 +13,9 @@ import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.config.Config;
 import org.slf4j.Logger;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -26,6 +29,12 @@ public class RemoteListsAddon extends MeteorAddon {
     private static ApiServer apiServer;
     private static DiscordBot discordBot;
     private static ScheduledExecutorService scheduler;
+
+    private static final ExecutorService API_EXECUTOR = Executors.newCachedThreadPool(r -> {
+        Thread t = new Thread(r, "remote-lists-api");
+        t.setDaemon(true);
+        return t;
+    });
 
     private static SettingGroup sg;
     private static Setting<Boolean> apiEnabled;
@@ -146,12 +155,14 @@ public class RemoteListsAddon extends MeteorAddon {
         if (apiServer != null) stopApi();
         apiServer = new ApiServer(apiHost.get(), apiPort.get());
 
-        try {
-            apiServer.start();
-        } catch (Exception e) {
-            LOG.error("API server failed", e);
-            apiServer = null;
-        }
+        API_EXECUTOR.submit(() -> {
+            try {
+                apiServer.start();
+            } catch (Exception e) {
+                LOG.error("API server failed", e);
+                apiServer = null;
+            }
+        });
     }
 
     public static void stopApi() {
@@ -163,7 +174,13 @@ public class RemoteListsAddon extends MeteorAddon {
 
     public static void startDiscord() {
         if (discordBot != null) stopDiscord();
-        discordBot = new DiscordBot(discordToken.get());
+
+        Map<String, String> choices = new LinkedHashMap<>();
+        choices.put(MeteorFriendListProvider.LIST_DISPLAY_NAME, MeteorFriendListProvider.LIST_ID);
+        if (percalypseProvider != null && percalypseProvider.isAvailable())
+            choices.put(PercalyseBlacklistProvider.LIST_DISPLAY_NAME, PercalyseBlacklistProvider.LIST_ID);
+
+        discordBot = new DiscordBot(discordToken.get(), choices);
         discordBot.start();
     }
 
@@ -176,6 +193,12 @@ public class RemoteListsAddon extends MeteorAddon {
 
     public static boolean isDiscordRunning() {
         return discordBot != null && discordBot.isRunning();
+    }
+
+    public static void disableDiscordOnError() {
+        discordEnabled.set(false);
+        Config.get().save();
+        LOG.info("Discord has been disabled due to a connection error");
     }
 
     @Override
