@@ -5,6 +5,7 @@ import com.mojang.logging.LogUtils;
 import dev.khaodoes.remoteListsAddon.api.ApiServer;
 import dev.khaodoes.remoteListsAddon.discord.DiscordBot;
 import dev.khaodoes.remoteListsAddon.provider.MeteorFriendListProvider;
+import dev.khaodoes.remoteListsAddon.provider.PercalyseBlacklistProvider;
 import dev.khaodoes.remoteListsAddon.service.ListService;
 import meteordevelopment.meteorclient.addons.GithubRepo;
 import meteordevelopment.meteorclient.addons.MeteorAddon;
@@ -33,11 +34,17 @@ public class RemoteListsAddon extends MeteorAddon {
     private static Setting<String> discordToken;
     private static Setting<Boolean> discordEnabled;
 
+    private static PercalyseBlacklistProvider percalypseProvider;
+    private static Setting<Boolean> percalypseEnabled;
+
     @Override
     public void onInitialize() {
         LOG.info("Initializing Remote Lists Addon");
 
         LIST_SERVICE.register(new MeteorFriendListProvider());
+
+        percalypseProvider = new PercalyseBlacklistProvider();
+        if (percalypseProvider.isAvailable()) LIST_SERVICE.register(percalypseProvider);
 
         initConfig();
         startScheduler();
@@ -115,6 +122,16 @@ public class RemoteListsAddon extends MeteorAddon {
             })
             .build()
         );
+
+        if (percalypseProvider.isAvailable()) {
+            percalypseEnabled = sg.add(new BoolSetting.Builder()
+                .name("percalypse-enabled")
+                .description("Include Percalyse blacklist in player lists.")
+                .defaultValue(true)
+                .onChanged(v -> percalypseProvider.setEnabled(v))
+                .build()
+            );
+        }
     }
 
     private void startScheduler() {
