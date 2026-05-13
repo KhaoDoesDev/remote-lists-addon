@@ -9,6 +9,8 @@ base {
 }
 
 repositories {
+    mavenCentral()
+
     maven {
         name = "meteor-maven"
         url = uri("https://maven.meteordev.org/releases")
@@ -27,6 +29,9 @@ dependencies {
 
     // Meteor
     modImplementation(libs.meteor.client)
+
+    // JDA
+    include(modImplementation(libs.jda)!!)
 }
 
 tasks {

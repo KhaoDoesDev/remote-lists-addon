@@ -12,6 +12,9 @@ loom = "1.16-SNAPSHOT"
 # Meteor (https://github.com/MeteorDevelopment/meteor-client/)
 meteor = "1.21.11-SNAPSHOT"
 
+# JDA (https://github.com/discord-jda/JDA)
+jda = "6.4.1"
+
 # Mods
 
 [libraries]
@@ -22,6 +25,9 @@ fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-l
 
 # Meteor client
 meteor-client = { module = "meteordevelopment:meteor-client", version.ref = "meteor" }
+
+# JDA
+jda = { module = "net.dv8tion:JDA", version.ref = "jda" }
 
 # Mods
 
