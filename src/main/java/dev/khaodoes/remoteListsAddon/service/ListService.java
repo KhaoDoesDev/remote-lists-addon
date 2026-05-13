@@ -49,7 +49,7 @@ public class ListService {
 
     public boolean addPlayer(String listId, String username) {
         for (PlayerListProvider p : providers) {
-            if (!p.getId().equals(listId)) continue;
+            if (!matchesProvider(p, listId)) continue;
             if (p.addPlayer(username)) return true;
         }
         return false;
@@ -57,9 +57,16 @@ public class ListService {
 
     public boolean removePlayer(String listId, String username) {
         for (PlayerListProvider p : providers) {
-            if (!p.getId().equals(listId)) continue;
+            if (!matchesProvider(p, listId)) continue;
             if (p.removePlayer(username)) return true;
         }
+        return false;
+    }
+
+    private boolean matchesProvider(PlayerListProvider p, String id) {
+        if (p.getId().equals(id)) return true;
+        for (PlayerList l : p.getLists())
+            if (l.id().equals(id)) return true;
         return false;
     }
 }

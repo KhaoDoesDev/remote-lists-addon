@@ -10,6 +10,8 @@ import net.minecraft.client.MinecraftClient;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
 
 public class MeteorFriendListProvider implements PlayerListProvider {
     public static final String LIST_ID = "meteor_friends";
@@ -51,22 +53,33 @@ public class MeteorFriendListProvider implements PlayerListProvider {
     @Override
     public boolean addPlayer(String username) {
         if (username == null || username.isBlank()) return false;
-        Friend friend = new Friend(username);
-        boolean added = Friends.get().add(friend);
-        if (added) {
-            friend.updateInfo();
-            refresh();
-        }
-        return added;
+        return onClientThread(() -> {
+            Friend friend = new Friend(username);
+            boolean added = Friends.get().add(friend);
+            if (added) { friend.updateInfo(); refresh(); }
+            return added;
+        });
     }
 
     @Override
     public boolean removePlayer(String username) {
         if (username == null || username.isBlank()) return false;
-        Friend f = Friends.get().get(username);
-        if (f == null) return false;
-        boolean removed = Friends.get().remove(f);
-        if (removed) refresh();
-        return removed;
+        return onClientThread(() -> {
+            Friend f = Friends.get().get(username);
+            if (f == null) return false;
+            boolean removed = Friends.get().remove(f);
+            if (removed) refresh();
+            return removed;
+        });
+    }
+
+    private boolean onClientThread(Supplier<Boolean> action) {
+        MinecraftClient c = MinecraftClient.getInstance();
+        if (c == null) return false;
+        if (c.isOnThread()) return action.get();
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+        c.execute(() -> future.complete(action.get()));
+        try { return future.get(); }
+        catch (Exception e) { return false; }
     }
 }
